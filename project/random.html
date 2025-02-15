@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>抽選ツール</title>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+1p:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'M PLUS 1p', sans-serif;
+            text-align: center;
+            margin: 50px;
+            transition: background 0.3s, color 0.3s;
+            overflow-x: hidden;
+        }
+        .menu-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 10px;
+            border: none;
+            background: none;
+            color: inherit;
+        }
+        .menu {
+            position: fixed;
+            top: 0;
+            left: -220px;
+            width: 200px;
+            height: 100%;
+            background: #fff;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            transition: left 0.3s ease-in-out;
+        }
+        .menu.open {
+            left: 0;
+        }
+        .menu a, .menu button {
+            display: block;
+            text-align: left;
+            font-size: 18px;
+            padding: 10px;
+            text-decoration: none;
+            color: #333;
+            border: none;
+            background: none;
+            cursor: pointer;
+        }
+        .menu a:hover, .menu button:hover {
+            background: #eee;
+        }
+        .theme-toggle {
+            font-size: 24px;
+            text-align: left;
+            border: none;
+            background: none;
+            cursor: pointer;
+            padding: 5px;
+        }
+        .dark-theme {
+            background: #222;
+            color: #fff;
+        }
+        .dark-theme .menu {
+            background: #333;
+        }
+        .dark-theme .menu a, .dark-theme .menu button {
+            color: #fff;
+        }
+        .dark-theme .menu a:hover, .dark-theme .menu button:hover {
+            background: #444;
+        }
+        .moai-logo {
+            font-size: 24px;
+            font-weight: bold;
+            background: linear-gradient(90deg, #00aaff, #0044cc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        input, button {
+            font-size: 18px;
+            padding: 5px;
+            margin: 10px;
+        }
+        #result {
+            font-size: 20px;
+            margin-top: 20px;
+        }
+        .footer {
+            margin-top: 50px;
+            font-size: 12px;
+            color: gray;
+            opacity: 0.5;
+            position: fixed;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <button class="menu-button" onclick="toggleMenu()">☰</button>
+
+    <div class="menu" id="menu">
+        <div class="menu-header">
+            <span class="moai-logo">Moai</span> 
+            <div>
+                <button class="theme-toggle" onclick="toggleTheme()">☼</button>
+                <button onclick="toggleMenu()">×</button>
+            </div>
+        </div>
+        <a href="https://example.jp">ホーム</a>
+        <a href="https://example.jp/project/what">moaiプロジェクトとは？</a>
+    </div>
+
+    <h1>抽選ツール</h1>
+    
+    <label>応募している人数</label>
+    <input type="number" id="numApplicants" min="1"><br>
+    
+    <label>当選する人数</label>
+    <input type="number" id="numWinners" min="1"><br>
+    
+    <button onclick="drawWinners()">抽選する</button>
+
+    <p id="result" style="display: none;"></p>
+
+    <p class="footer">moai project</p>
+
+    <script>
+        function drawWinners() {
+            let numWinners = parseInt(document.getElementById("numWinners").value);
+            let numApplicants = parseInt(document.getElementById("numApplicants").value);
+            let resultElement = document.getElementById("result");
+
+            if (isNaN(numWinners) || isNaN(numApplicants) || numWinners <= 0 || numApplicants <= 0) {
+                resultElement.style.display = "block";
+                resultElement.textContent = "正しい数値を入力してください。";
+                return;
+            }
+
+            let applicants = Array.from({length: numApplicants}, (_, i) => i + 1);
+            let winners = [];
+
+            for (let i = 0; i < Math.min(numWinners, numApplicants); i++) {
+                let randomIndex = Math.floor(Math.random() * applicants.length);
+                winners.push(applicants.splice(randomIndex, 1)[0]);
+            }
+
+            resultElement.style.display = "block";
+            resultElement.textContent = winners.join(", ");
+        }
+
+        function toggleMenu() {
+            let menu = document.getElementById("menu");
+            menu.classList.toggle("open");
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle("dark-theme");
+        }
+    </script>
+
+</body>
+</html>
